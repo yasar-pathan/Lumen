@@ -482,8 +482,9 @@ In an enterprise deployment, Lumen AI connects directly to high-throughput messa
 ---
 
 ## Team
-- **Team Name**: Obsidian Observability Core
-- **Members**: Bob the Tester, Sarah Smith
+- **Team Name**: Apex
+- **Members**: Yasar Pathan (College ID: D24IT181)
+- **College**: Charusat University
 
 ---
 
