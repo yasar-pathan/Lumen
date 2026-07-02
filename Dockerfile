@@ -42,6 +42,9 @@ COPY backend/ .
 # Copy Frontend compiled build from Stage 1
 COPY --from=frontend-builder /app/backend/public/app ./public/app
 
+# Create bootstrap cache and storage directories
+RUN mkdir -p bootstrap/cache storage/framework/sessions storage/framework/views storage/framework/cache
+
 # Run Composer installation
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN composer install --no-dev --optimize-autoloader
