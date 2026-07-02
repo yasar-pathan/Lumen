@@ -43,7 +43,10 @@ COPY backend/ .
 COPY --from=frontend-builder /app/backend/public/app ./public/app
 
 # Create bootstrap cache and storage directories
-RUN mkdir -p bootstrap/cache storage/framework/sessions storage/framework/views storage/framework/cache
+RUN mkdir -p bootstrap/cache storage/framework/sessions storage/framework/views storage/framework/cache storage/logs
+
+# Create a minimal .env file so Laravel can boot
+RUN touch .env
 
 # Run Composer installation
 ENV COMPOSER_ALLOW_SUPERUSER=1
@@ -56,6 +59,15 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # Copy Apache configuration
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
 
+# Create entrypoint script that caches config from ECS env vars at runtime
+RUN echo '#!/bin/bash\n\
+php artisan config:clear 2>/dev/null\n\
+php artisan route:cache 2>/dev/null\n\
+php artisan view:cache 2>/dev/null\n\
+apache2-foreground' > /usr/local/bin/start.sh \
+    && chmod +x /usr/local/bin/start.sh
+
 # Set environment variables for production
 ENV PORT=80
 EXPOSE 80
+CMD ["/usr/local/bin/start.sh"]
