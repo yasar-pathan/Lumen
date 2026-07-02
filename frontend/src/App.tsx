@@ -634,7 +634,10 @@ function KnowledgeGapsView() {
           <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.5px' }}>Knowledge Gaps</h1>
           <p className="text-muted" style={{ marginTop: 4 }}>Observed term query mismatches that led to AI hallucinations or failures due to lack of ground truth.</p>
         </div>
-        <button className="btn btn-primary" onClick={() => setShowAddModal(true)}><Plus size={16} /> Add Knowledge</button>
+        <div className="flex-row" style={{ gap: 12 }}>
+          <button className="btn btn-secondary" onClick={fetchGaps}><RefreshCw size={16} /> Refresh</button>
+          <button className="btn btn-primary" onClick={() => setShowAddModal(true)}><Plus size={16} /> Add Knowledge</button>
+        </div>
       </div>
 
       <div className="card" style={{ padding: 0 }}>

@@ -40,6 +40,36 @@ class KnowledgeGapDetector
             }
         }
 
+        // Filter out terms that now exist in KnowledgeChunks (meaning they have been resolved)
+        $chunks = \App\Models\KnowledgeChunk::all();
+
+        foreach ($gaps as $term => $gap) {
+            $exists = false;
+            foreach ($chunks as $chunk) {
+                if (stripos($chunk->title, $term) !== false || stripos($chunk->content, $term) !== false) {
+                    $exists = true;
+                    break;
+                }
+                $tags = $chunk->tags ?? [];
+                if (is_array($tags)) {
+                    foreach ($tags as $tag) {
+                        if (stripos((string) $tag, $term) !== false) {
+                            $exists = true;
+                            break;
+                        }
+                    }
+                }
+                if ($exists) {
+                    break;
+                }
+            }
+
+            // If the missing term is now covered by a knowledge chunk, remove it from the gaps list
+            if ($exists) {
+                unset($gaps[$term]);
+            }
+        }
+
         // Sort descending by count, then alphabetically by term
         uasort($gaps, function ($a, $b) {
             if ($b['count'] === $a['count']) {

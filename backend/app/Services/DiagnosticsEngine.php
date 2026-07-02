@@ -70,6 +70,11 @@ class DiagnosticsEngine
             $missingTerms
         );
 
+        if ($classification['root_cause'] === 'knowledge_gap' && !empty(trim($userQuery))) {
+            // Replace tokenized missing terms with the entire user query for better context in UI
+            $missingTerms = [trim($userQuery)];
+        }
+
         // 4. Run safety check
         $safetyFlag = $this->checkSafety($message->content);
 

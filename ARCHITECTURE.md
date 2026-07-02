@@ -4,7 +4,6 @@
 **Team Name**: Apex  
 **Members**: Yasar Pathan (College ID: D24IT181)  
 **College**: Charusat University  
-**Status**: Approved / Production Blueprint  
 
 ---
 
@@ -33,9 +32,11 @@ Without runtime observability, enterprises cannot audit Conversational AI pipeli
 
 ## 3. Proposed Solution
 
-Lumen AI is a RAG-centric Observability platform providing active guardrails and hot-fix debugging workflows.
+Think of Lumen AI as a mission control center for your RAG applications. Instead of just passively logging what goes wrong, it actively monitors, diagnoses, and helps you fix issues on the fly. 
 
-```
+Here is how data flows through our ecosystem:
+
+```text
 [ User Query ] ➔ [ Retrieval Service ] ➔ [ LLM Response ]
                                                   │
 [ Knowledge Improvement ] 🔑 [ Diagnostics Engine ] ➔ [ Anomaly Alert / Log ]
@@ -43,11 +44,13 @@ Lumen AI is a RAG-centric Observability platform providing active guardrails and
          └───────────── [ Comparative Replay ] 🔂 ────────┘
 ```
 
-### Core Value Pillars
-*   **Sub-Millisecond Guardrails**: Executes deterministic keyword overlap and safety classification algorithms at runtime.
-*   **Root Cause Classifier**: Segregates execution failures into clear categories: `knowledge_gap`, `hallucination`, `safety_violation`, or `healthy`.
-*   **Closed-Loop Remediation**: Integrates Knowledge Gap detection with a Ground Truth insertion tool, allowing developers to inject missing facts directly into database schemas.
-*   **Regression Guard**: Provides comparative replay sandboxes to execute historical failure traces against draft prompt versions side-by-side.
+### What We Bring to the Table
+Instead of a standard APM, we've built our platform around four essential pillars that engineers actually need when shipping LLM features:
+
+* **Blazing Fast Guardrails**: We run deterministic keyword overlap and safety checks at runtime. This means you get your safety netting in less than a millisecond, without slowing down the user experience.
+* **Smart Root-Cause Analysis**: When an AI fails, you shouldn't have to guess why. We instantly categorize failures into actionable buckets: is it a `knowledge_gap`, a `hallucination`, a `safety_violation`, or is the trace perfectly `healthy`?
+* **Closed-Loop Fact Injection**: It's not enough to just know the LLM lacked context. When a knowledge gap is detected, developers can seamlessly inject the missing ground-truth facts straight back into the database from our UI.
+* **Risk-Free Regression Testing**: Tweaking system prompts can be terrifying. We provide a comparative replay sandbox where you can test historical failures against draft prompts side-by-side before pushing them live.
 
 ---
 
@@ -185,26 +188,46 @@ This sequence diagram illustrates the live execution trace cycle:
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Developer
-    participant SPA as React Frontend
-    participant Route as Laravel Router
-    participant Svc as Service Container
-    participant DB as PostgreSQL DB
-    participant API as OpenRouter API
 
-    Developer->>SPA: Click "Run Query" in Test Console
-    SPA->>Route: POST /api/console/query { query, prompt_id, provider }
-    Route->>Svc: Instantiate Controllers & Services
-    Svc->>DB: Query Active Prompt & Matching Context Chunks
-    DB-->>Svc: Return configurations & facts
-    Svc->>API: Execute API Completion Request
-    API-->>Svc: Return AI completion & latency
-    Svc->>Svc: DiagnosticsEngine.analyze() (Compute Groundedness)
-    Svc->>DB: Save Conversation, Message, and Diagnostic records
-    DB-->>Svc: Confirm write success
-    Svc-->>Route: Return serialized JSON Resource
-    Route-->>SPA: Render UI cards & metrics
-    SPA-->>Developer: Display trace results
+    actor Engineer
+
+    participant UI as React Frontend
+    participant API as Express API
+    participant RET as Retrieval Service
+    participant LLM as LLM Provider
+    participant DIAG as Diagnostics Engine
+    participant DB as PostgreSQL
+
+    Engineer->>UI: Run query from Test Console
+
+    UI->>API: POST /api/console/query
+
+    API->>RET: Retrieve relevant knowledge chunks
+
+    RET->>DB: Fetch matching knowledge
+    DB-->>RET: Return context chunks
+
+    RET-->>API: Context + Active Prompt
+
+    API->>LLM: Generate AI Response
+
+    LLM-->>API: Response
+
+    API->>DIAG: Analyze conversation
+
+    DIAG->>DIAG: Groundedness Scoring
+    DIAG->>DIAG: Root Cause Classification
+    DIAG->>DIAG: Knowledge Gap Detection
+    DIAG->>DIAG: Safety Evaluation
+
+    DIAG->>DB: Store conversation & diagnostics
+    DB-->>DIAG: Success
+
+    DIAG-->>API: Health Score + Findings
+
+    API-->>UI: JSON Response
+
+    UI-->>Engineer: Display answer, sources, diagnostics, and health score
 ```
 
 ---

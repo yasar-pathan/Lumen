@@ -53,22 +53,46 @@ Lumen AI is an **AI Observability and Governance platform** that serves as a run
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Developer
-    participant App as React Frontend
-    participant Server as Laravel Backend
-    participant DB as PostgreSQL (Supabase)
-    participant Provider as LLM Provider
 
-    Developer->>App: Submits Query in Test Console
-    App->>Server: POST /api/console/query { query, prompt_id, provider }
-    Server->>DB: Fetch System Prompt Version
-    Server->>DB: Search vector context chunks
-    Server->>Provider: Request completion with system prompt + query + chunks
-    Provider-->>Server: Returns AI response and execution metrics
-    Server->>Server: Run DiagnosticsEngine (Groundedness & Safety)
-    Server->>DB: Save Conversation, Message, and Diagnostic cases
-    Server-->>App: Return diagnostic metrics and AI response
-    App-->>Developer: Render live output with anomaly flags
+    actor Engineer
+
+    participant UI as React Frontend
+    participant API as Express API
+    participant RET as Retrieval Service
+    participant LLM as LLM Provider
+    participant DIAG as Diagnostics Engine
+    participant DB as PostgreSQL
+
+    Engineer->>UI: Run query from Test Console
+
+    UI->>API: POST /api/console/query
+
+    API->>RET: Retrieve relevant knowledge chunks
+
+    RET->>DB: Fetch matching knowledge
+    DB-->>RET: Return context chunks
+
+    RET-->>API: Context + Active Prompt
+
+    API->>LLM: Generate AI Response
+
+    LLM-->>API: Response
+
+    API->>DIAG: Analyze conversation
+
+    DIAG->>DIAG: Groundedness Scoring
+    DIAG->>DIAG: Root Cause Classification
+    DIAG->>DIAG: Knowledge Gap Detection
+    DIAG->>DIAG: Safety Evaluation
+
+    DIAG->>DB: Store conversation & diagnostics
+    DB-->>DIAG: Success
+
+    DIAG-->>API: Health Score + Findings
+
+    API-->>UI: JSON Response
+
+    UI-->>Engineer: Display answer, sources, diagnostics, and health score
 ```
 
 ---
