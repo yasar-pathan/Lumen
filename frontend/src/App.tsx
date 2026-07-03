@@ -716,7 +716,7 @@ function KnowledgeGapsView() {
 function TestConsoleView() {
   const [query, setQuery] = useState('');
   const [promptVersionId, setPromptVersionId] = useState(2);
-  const [provider, setProvider] = useState('mock');
+  const [provider, setProvider] = useState('openrouter');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
 
