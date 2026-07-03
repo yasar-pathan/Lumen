@@ -8,5 +8,13 @@ export default defineConfig({
     outDir: '../backend/public/app',
     emptyOutDir: true,
   },
-  base: '/app/'
+  base: '/app/',
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:8000',
+        changeOrigin: true,
+      }
+    }
+  }
 })
