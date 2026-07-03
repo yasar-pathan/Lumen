@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { 
-  Home, 
-  Video, 
-  CheckSquare, 
+import {
+  Home,
+  Video,
+  CheckSquare,
   Search,
   Bell,
   Sun,
@@ -36,7 +36,7 @@ interface HealthMetrics {
 export default function App() {
   const [theme, setTheme] = useState('light');
   const [activeTab, setActiveTab] = useState('dashboard');
-  
+
   // Data
   const [metrics, setMetrics] = useState<HealthMetrics | null>(null);
   const [incidents, setIncidents] = useState<any[]>([]);
@@ -64,12 +64,12 @@ export default function App() {
       ]);
       const dataH = await resH.json();
       const dataD = await resD.json();
-      
+
       if (dataH?.data) setMetrics(dataH.data);
       else setMetrics({ score: 0, breakdown: { total_runs: 0, grounding_pct: 0, avg_latency_ms: 0, hallucination_rate: 0, safety_score: 0 } });
-      
+
       if (dataD?.data) setIncidents(dataD.data);
-    } catch (e) { 
+    } catch (e) {
       setMetrics({ score: 0, breakdown: { total_runs: 0, grounding_pct: 0, avg_latency_ms: 0, hallucination_rate: 0, safety_score: 0 } });
     }
     setLoading(false);
@@ -106,10 +106,10 @@ export default function App() {
         <header className="top-header">
           <div style={{ position: 'relative' }}>
             <Search size={16} className="text-light" style={{ position: 'absolute', left: 12, top: 10 }} />
-            <input 
-              type="text" 
-              className="search-input" 
-              placeholder="Search traces and logs..." 
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search traces and logs..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
             />
@@ -129,28 +129,28 @@ export default function App() {
         {/* PAGE CONTENT */}
         <div className="page-wrapper">
           {activeTab === 'dashboard' && (
-            <DashboardView 
-              metrics={metrics} 
-              incidents={incidents} 
-              loading={loading} 
+            <DashboardView
+              metrics={metrics}
+              incidents={incidents}
+              loading={loading}
               searchQuery={searchQuery}
-              onTabChange={setActiveTab} 
+              onTabChange={setActiveTab}
               setSelectedReplayId={setSelectedReplayId}
             />
           )}
           {activeTab === 'traces' && (
-            <TracesView 
-              incidents={incidents} 
-              loading={loading} 
+            <TracesView
+              incidents={incidents}
+              loading={loading}
               searchQuery={searchQuery}
               onDelete={handleDeleteTrace}
               setSelectedReplayId={setSelectedReplayId}
             />
           )}
           {activeTab === 'doctor' && (
-            <DoctorKanbanView 
-              incidents={incidents} 
-              loading={loading} 
+            <DoctorKanbanView
+              incidents={incidents}
+              loading={loading}
               searchQuery={searchQuery}
               cardStages={cardStages}
               setCardStages={setCardStages}
@@ -164,9 +164,9 @@ export default function App() {
 
       {/* DETAILED TIMELINE REPLAY MODAL */}
       {selectedReplayId !== null && (
-        <ReplayModal 
-          messageId={selectedReplayId} 
-          onClose={() => setSelectedReplayId(null)} 
+        <ReplayModal
+          messageId={selectedReplayId}
+          onClose={() => setSelectedReplayId(null)}
         />
       )}
     </div>
@@ -198,19 +198,19 @@ function DashboardView({ metrics, incidents, loading, searchQuery, onTabChange, 
 
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-      
+
       {/* Hero Header */}
       <div className="card" style={{ padding: 32, marginBottom: 32, backgroundColor: 'var(--bg-card)', border: 'none', boxShadow: 'none' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <div>
             <div className="flex-row" style={{ color: 'var(--brand-primary)', fontWeight: 600, fontSize: 13, marginBottom: 12 }}>
-              <Activity size={16} /> 
+              <Activity size={16} />
               <span>Active Governance Mode</span>
               <span className="text-muted" style={{ marginLeft: 8, fontSize: 11, fontWeight: 500 }}>System Live</span>
             </div>
             <h1 style={{ fontSize: 32, fontWeight: 800, marginBottom: 8, letterSpacing: '-0.5px' }}>Good evening, Operator!</h1>
             <p className="text-muted" style={{ fontSize: 15 }}>Your AI observability command center — traces, anomalies, and logs in one place.</p>
-            
+
             <div style={{ marginTop: 24, display: 'inline-flex', alignItems: 'center', backgroundColor: 'var(--brand-light)', color: 'var(--brand-primary)', padding: '8px 16px', borderRadius: 8, fontSize: 13, fontWeight: 500 }}>
               <Play size={14} style={{ marginRight: 8 }} />
               You processed {metrics.breakdown.total_runs} traces with a composite health score of {metrics.score}%.
@@ -244,7 +244,7 @@ function DashboardView({ metrics, incidents, loading, searchQuery, onTabChange, 
           <QuickAction color="qa-green" icon={<CheckSquare size={18} className="text-success" />} title="Doctor Logs" sub="Resolve active incidents" />
         </div>
         <div style={{ cursor: 'pointer' }} onClick={() => onTabChange('gaps')}>
-          <QuickAction color="qa-purple" icon={<Plus size={18} className="text-primary" style={{color:'var(--brand-primary)'}}/>} title="Add Knowledge" sub="Fill identified gaps" />
+          <QuickAction color="qa-purple" icon={<Plus size={18} className="text-primary" style={{ color: 'var(--brand-primary)' }} />} title="Add Knowledge" sub="Fill identified gaps" />
         </div>
         <div style={{ cursor: 'pointer' }} onClick={() => onTabChange('console')}>
           <QuickAction color="qa-orange" icon={<Terminal size={18} className="text-warning" />} title="Test Console" sub="Open debug environment" />
@@ -341,13 +341,13 @@ function TracesView({ incidents, loading, searchQuery, onDelete, setSelectedRepl
   const [filter, setFilter] = useState('all');
 
   if (loading) return <LoadingSpinner />;
-  
+
   // Filter lists
   const filtered = incidents.filter((inc: any) => {
     // 1. Search Query
-    const queryMatch = (inc.conversation?.title || '').toLowerCase().includes(searchQuery.toLowerCase()) || 
-                       (inc.message?.content || '').toLowerCase().includes(searchQuery.toLowerCase());
-    
+    const queryMatch = (inc.conversation?.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (inc.message?.content || '').toLowerCase().includes(searchQuery.toLowerCase());
+
     if (!queryMatch) return false;
 
     // 2. Tab Filter
@@ -367,7 +367,7 @@ function TracesView({ incidents, loading, searchQuery, onDelete, setSelectedRepl
       </div>
 
       <div className="tabs-row">
-        <button className={`tab ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}><Play size={14} style={{ display: 'inline', marginRight: 6 }}/>All Traces</button>
+        <button className={`tab ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}><Play size={14} style={{ display: 'inline', marginRight: 6 }} />All Traces</button>
         <button className={`tab ${filter === 'anomalies' ? 'active' : ''}`} onClick={() => setFilter('anomalies')}>Anomalies</button>
         <button className={`tab ${filter === 'healthy' ? 'active' : ''}`} onClick={() => setFilter('healthy')}>Healthy</button>
       </div>
@@ -382,30 +382,30 @@ function TracesView({ incidents, loading, searchQuery, onDelete, setSelectedRepl
                 </span>
                 <span style={{ fontFamily: 'monospace', fontSize: 11, color: 'var(--text-light)' }}>#{inc.message_id}</span>
               </div>
-              
+
               {/* User query as beautiful title */}
               <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 10, color: 'var(--text-main)', lineHeight: 1.4 }}>
                 {inc.conversation?.title?.replace('Healthy Flow: ', '')?.replace('Broken Flow: ', '') || 'Trace Execution'}
               </h3>
 
               {/* Muted paragraph showing the AI Response beautifully clamped to 3 lines max */}
-              <p className="text-muted" style={{ 
-                fontSize: 13, 
-                lineHeight: 1.5, 
-                marginBottom: 16, 
-                display: '-webkit-box', 
-                WebkitLineClamp: 3, 
-                WebkitBoxOrient: 'vertical', 
-                overflow: 'hidden' 
+              <p className="text-muted" style={{
+                fontSize: 13,
+                lineHeight: 1.5,
+                marginBottom: 16,
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden'
               } as any}>
                 {inc.message?.content || 'No AI execution payload content.'}
               </p>
-              
+
               <div className="flex-row" style={{ marginTop: 16 }}>
                 <div className="avatar" style={{ width: 24, height: 24, fontSize: 10 }}>SY</div>
                 <div style={{ fontSize: 12, fontWeight: 600 }}>System Execution <span className="text-muted" style={{ fontWeight: 400, marginLeft: 4 }}>API</span></div>
               </div>
-              
+
               <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
                 <Activity size={14} /> Latency: {inc.latency_ms}ms
               </div>
@@ -440,7 +440,7 @@ function TracesView({ incidents, loading, searchQuery, onDelete, setSelectedRepl
 // ==========================================================
 function DoctorKanbanView({ incidents, loading, searchQuery, cardStages, setCardStages }: any) {
   if (loading) return <LoadingSpinner />;
-  
+
   const anomalies = incidents.filter((i: any) => i.root_cause !== 'healthy');
 
   // Filter
@@ -490,8 +490,8 @@ function DoctorKanbanView({ incidents, loading, searchQuery, cardStages, setCard
               </div>
               <div className="flex-between" style={{ marginTop: 16 }}>
                 <div style={{ fontSize: 11, color: 'var(--text-light)', fontFamily: 'monospace' }}>Trace #{inc.message_id}</div>
-                <button 
-                  className="btn btn-secondary" 
+                <button
+                  className="btn btn-secondary"
                   style={{ height: 26, fontSize: 11, padding: '0 8px' }}
                   onClick={() => handleStageMove(inc.id, 'investigating')}
                 >
@@ -524,8 +524,8 @@ function DoctorKanbanView({ incidents, loading, searchQuery, cardStages, setCard
               </div>
               <div className="flex-between" style={{ marginTop: 16 }}>
                 <div style={{ fontSize: 11, color: 'var(--text-light)', fontFamily: 'monospace' }}>Trace #{inc.message_id}</div>
-                <button 
-                  className="btn btn-primary" 
+                <button
+                  className="btn btn-primary"
                   style={{ height: 26, fontSize: 11, padding: '0 8px' }}
                   onClick={() => handleStageMove(inc.id, 'fixed')}
                 >
@@ -744,7 +744,7 @@ function TestConsoleView() {
     <div style={{ maxWidth: 800, margin: '0 auto' }}>
       <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8, letterSpacing: '-0.5px' }}>Test Console</h1>
       <p className="text-muted" style={{ marginBottom: 24 }}>Run queries against specific prompt versions to test RAG response grounding and governance live.</p>
-      
+
       <div className="card" style={{ padding: 24, marginBottom: 24 }}>
         <form onSubmit={handleSubmit}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
@@ -759,22 +759,22 @@ function TestConsoleView() {
               <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-light)', display: 'block', marginBottom: 6 }}>LLM PROVIDER</label>
               <select className="search-input" style={{ width: '100%', paddingLeft: 12 }} value={provider} onChange={e => setProvider(e.target.value)}>
                 <option value="mock">Mock LLM Provider</option>
-                <option value="openrouter">OpenRouter API</option>
+                <option value="openrouter" defaultChecked>OpenRouter API</option>
               </select>
             </div>
           </div>
-          
+
           <div style={{ marginBottom: 20 }}>
             <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-light)', display: 'block', marginBottom: 6 }}>USER QUERY</label>
-            <textarea 
-              className="search-input" 
+            <textarea
+              className="search-input"
               style={{ width: '100%', height: 100, padding: 12, resize: 'none', fontFamily: 'inherit' }}
               placeholder="e.g. Can I cancel my subscription at any time?"
               value={query}
               onChange={e => setQuery(e.target.value)}
             />
           </div>
-          
+
           <button className="btn btn-primary" type="submit" style={{ width: '100%', height: 40 }} disabled={loading}>
             {loading ? 'Running Execution...' : 'Run Query'}
           </button>
@@ -784,7 +784,7 @@ function TestConsoleView() {
       {result && (
         <div className="card" style={{ padding: 24 }}>
           <h2 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16 }}>Execution Result</h2>
-          
+
           <div style={{ marginBottom: 16 }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-light)', marginBottom: 4 }}>AI RESPONSE</div>
             <div style={{ background: 'var(--bg-app)', padding: 16, borderRadius: 8, fontSize: 13, lineHeight: 1.5, border: '1px solid var(--border-light)' }}>
@@ -909,19 +909,19 @@ function AnalyticsView({ metrics, loading }: any) {
             <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-light)', letterSpacing: 0.5, marginBottom: 6 }}>SCOPE & TIMEFRAME</div>
             <div className="flex-row">
               <div style={{ display: 'flex', border: '1px solid var(--border-light)', borderRadius: 20, overflow: 'hidden', marginRight: 12 }}>
-                <button 
+                <button
                   style={{ border: 'none', padding: '4px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer', background: timeframe === '7d' ? 'var(--brand-primary)' : 'var(--bg-app)', color: timeframe === '7d' ? 'white' : 'var(--text-main)' }}
                   onClick={() => setTimeframe('7d')}
                 >
                   7d
                 </button>
-                <button 
+                <button
                   style={{ border: 'none', padding: '4px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer', background: timeframe === '30d' ? 'var(--brand-primary)' : 'var(--bg-app)', color: timeframe === '30d' ? 'white' : 'var(--text-main)' }}
                   onClick={() => setTimeframe('30d')}
                 >
                   30d
                 </button>
-                <button 
+                <button
                   style={{ border: 'none', padding: '4px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer', background: timeframe === '90d' ? 'var(--brand-primary)' : 'var(--bg-app)', color: timeframe === '90d' ? 'white' : 'var(--text-main)' }}
                   onClick={() => setTimeframe('90d')}
                 >
@@ -930,10 +930,10 @@ function AnalyticsView({ metrics, loading }: any) {
               </div>
 
               {/* SCOPE DROPDOWN */}
-              <select 
-                className="search-input" 
-                style={{ width: 140, height: 28, padding: '0 8px', borderRadius: 8, fontSize: 12 }} 
-                value={scope} 
+              <select
+                className="search-input"
+                style={{ width: 140, height: 28, padding: '0 8px', borderRadius: 8, fontSize: 12 }}
+                value={scope}
                 onChange={(e) => setScope(e.target.value)}
               >
                 <option value="production">Production</option>
@@ -950,7 +950,7 @@ function AnalyticsView({ metrics, loading }: any) {
           <div className="flex-between" style={{ marginBottom: 12 }}>
             <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-light)', letterSpacing: 0.5 }}>GOVERNANCE INDEX</span>
             <div className="qa-purple" style={{ width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Activity size={16} className="text-primary" style={{color:'var(--brand-primary)'}} />
+              <Activity size={16} className="text-primary" style={{ color: 'var(--brand-primary)' }} />
             </div>
           </div>
           <div style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-1px' }}>{currentHealth}%</div>
@@ -1032,7 +1032,7 @@ function AnalyticsView({ metrics, loading }: any) {
           </div>
         </div>
       </div>
-      
+
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 24, marginBottom: 24 }}>
         <div className="card" style={{ padding: 24 }}>
           <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 24 }}>Anomaly Throughput</h3>
@@ -1054,8 +1054,8 @@ function AnalyticsView({ metrics, loading }: any) {
           <div style={{ height: 200 }}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={[{name: 'Done', value: 40, color: '#10b981'}, {name: 'In Progress', value: 30, color: '#4f46e5'}, {name: 'To Do', value: 30, color: '#94a3b8'}]} innerRadius={40} outerRadius={70} paddingAngle={2} dataKey="value">
-                  {[{name: 'Done', value: 40, color: '#10b981'}, {name: 'In Progress', value: 30, color: '#4f46e5'}, {name: 'To Do', value: 30, color: '#94a3b8'}].map((entry, index) => (
+                <Pie data={[{ name: 'Done', value: 40, color: '#10b981' }, { name: 'In Progress', value: 30, color: '#4f46e5' }, { name: 'To Do', value: 30, color: '#94a3b8' }]} innerRadius={40} outerRadius={70} paddingAngle={2} dataKey="value">
+                  {[{ name: 'Done', value: 40, color: '#10b981' }, { name: 'In Progress', value: 30, color: '#4f46e5' }, { name: 'To Do', value: 30, color: '#94a3b8' }].map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
@@ -1149,12 +1149,12 @@ function ReplayModal({ messageId, onClose }: any) {
             <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: 'var(--brand-primary)' }}>
               Original Execution (Prompt v{data.prompt_version?.version})
             </div>
-            
+
             <div style={{ marginBottom: 16 }}>
               <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-light)', marginBottom: 4 }}>USER QUERY</div>
               <div style={{ fontWeight: 600 }}>{data.conversation?.title?.replace('Healthy Flow: ', '')?.replace('Broken Flow: ', '') || 'Refund policy check'}</div>
             </div>
-            
+
             <div style={{ marginBottom: 16 }}>
               <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-light)', marginBottom: 4 }}>ASSISTANT RESPONSE</div>
               <div style={{ fontSize: 13, lineHeight: 1.5, background: 'var(--bg-card)', padding: 12, borderRadius: 8, border: '1px solid var(--border-light)' }}>

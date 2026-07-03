@@ -39,6 +39,9 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Copy backend codebase
 COPY backend/ .
 
+# Clean up any pre-existing local React build files to avoid serving stale assets
+RUN rm -rf public/app
+
 # Copy Frontend compiled build from Stage 1
 COPY --from=frontend-builder /app/backend/public/app ./public/app
 
