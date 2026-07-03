@@ -20,7 +20,9 @@ import {
 } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const API_URL = 'http://127.0.0.1:8000/api';
+const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? (window.location.port === '8000' || window.location.port === '' ? '/api' : 'http://127.0.0.1:8000/api')
+  : '/api';
 
 interface HealthMetrics {
   score: number;
