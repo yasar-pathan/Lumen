@@ -30,7 +30,7 @@ class RootCauseClassifier
         }
 
         // 2. Knowledge Gap Check
-        if ($retrievalRelevanceAvg < 0.15) {
+        if ($retrievalRelevanceAvg < 0.15 || !empty($missingTerms)) {
             $termsStr = !empty($missingTerms) ? implode(', ', $missingTerms) : 'this topic';
             return [
                 'root_cause' => 'knowledge_gap',
